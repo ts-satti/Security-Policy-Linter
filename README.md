@@ -44,7 +44,7 @@ It helps **security teams, compliance officers, auditors, and policy authors** i
 pip install git+[(https://github.com/ts-satti/Security-Policy-Linter.git)](https://github.com/ts-satti/Security-Policy-Linter.git)
 ### **Option 2: Install locally (after cloning)**
 ```bash
-git clone [https://github.com/yourusername/security-policy-linter.git](https://github.com/ts-satti/Security-Policy-Linter.git)
+git clone https://github.com/ts-satti/Security-Policy-Linter.git
 cd security-policy-linter
 pip install .
 After installation, the spl command will be available system-wide.
