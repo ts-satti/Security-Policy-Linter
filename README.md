@@ -1,72 +1,92 @@
-Security Policy Linter
-https://img.shields.io/badge/License-MIT-yellow.svg
-https://img.shields.io/badge/python-3.8+-blue.svg
+# 🔐 Security Policy Linter
 
-A command‑line tool to lint security policy documents for clarity, consistency, and contradictions.
-It helps security teams, compliance officers, and policy authors identify problematic language and conflicting requirements.
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 
-✨ Features
-Contradiction Detection – Finds conflicting numeric rules (e.g., password length: “minimum 8” vs “maximum 6”)
+A command-line tool to lint **security policy documents** for **clarity, consistency, and contradictions**.
 
-Vague Language Analysis – Flags subjective terms like appropriate, reasonable, periodically, sufficient
+It helps **security teams, compliance officers, auditors, and policy authors** identify problematic language and conflicting requirements before audits or incidents occur.
 
-Weak Language Detection – Highlights advisory terms (should, may, could) in mandatory contexts
+---
 
-Overly Complex Sentences – Counts high‑density mandatory terms (must, shall, required)
+## ✨ Features
 
-Session Timeout Extraction – Parses and normalises timeout rules (minutes, hours, days, seconds)
+- **Contradiction Detection**  
+  Finds conflicting numeric rules (e.g. *“minimum 8 characters”* vs *“maximum 6 characters”*)
 
-Unit Normalisation – Converts mixed units (1 hour vs 60 minutes) for accurate comparison
+- **Vague Language Analysis**  
+  Flags subjective terms like *appropriate*, *reasonable*, *periodically*, *sufficient*
 
-Zero External Dependencies – Uses only the Python standard library
+- **Weak Language Detection**  
+  Highlights advisory terms (*should*, *may*, *could*) in mandatory contexts
 
-Comprehensive Test Suite – Over 140 tests ensure reliability
+- **Overly Complex Sentences**  
+  Detects sentences with excessive mandatory terms (*must*, *shall*, *required*)
 
-🚀 Installation
-Option 1: Install from GitHub (recommended)
-bash
-pip install git+https://github.com/ts-satti/Security-Policy-Linter.git
-Option 2: Install locally (after cloning)
-bash
-git clone https://github.com/ts-satti/Security-Policy-Linter.git
+- **Session Timeout Extraction**  
+  Parses and normalises timeout rules (minutes, hours, days, seconds)
+
+- **Unit Normalisation**  
+  Converts mixed units (e.g. *1 hour* vs *60 minutes*) for accurate comparison
+
+- **Zero External Dependencies**  
+  Uses only the Python standard library
+
+- **Extensive Test Coverage**  
+  Over **140 automated tests** ensure correctness and reliability
+
+---
+
+## 🚀 Installation
+
+### Option 1: Install from GitHub (recommended)
+
+pip install git+[(https://github.com/ts-satti/Security-Policy-Linter.git)](https://github.com/ts-satti/Security-Policy-Linter.git)
+### **Option 2: Install locally (after cloning)**
+```bash
+git clone [https://github.com/yourusername/security-policy-linter.git](https://github.com/ts-satti/Security-Policy-Linter.git)
 cd security-policy-linter
 pip install .
-After installation, the command spl will be available system‑wide.
-
-📖 Usage
-bash
+After installation, the spl command will be available system-wide.
+```
+### 📖 Usage
+```bash
 spl [options] <policy_file> [<policy_file> ...]
-Options
-Option	Description
--t, --threshold	Maximum allowed mandatory terms per sentence (default: 2)
--v, --verbose	Show verbose output (including skipped lines)
---version	Display version and exit
-Examples
-Basic analysis
+```
+### Options
 
-bash
+| Option | Description |
+| :--- | :--- |
+| `-t, --threshold` | Maximum mandatory terms per sentence (default: 2) |
+| `-v, --verbose` | Show verbose output (including skipped lines) |
+| `--version` | Display version and exit |
+
+### Examples
+# Basic analysis
+```bash
 spl password_policy.txt
-Multiple files
-
-bash
+```
+### Multiple files
+```bash
 spl policy1.txt policy2.txt
-Custom complexity threshold
-
-bash
+```
+### Custom complexity threshold
+```bash
 spl -t 3 security_policy.txt
-📝 Example Output
-Input (contradiction_test.txt):
-
-text
+```
+## 📝 Example Output
+### Input (contradiction_test.txt)
+```bash
 Passwords must be at least 8 characters.
 Passwords must be at most 6 characters.
-Run:
-
-bash
+```
+### Run
+```bash
 spl contradiction_test.txt
-Output:
+```
 
-text
+### Output
+```bash
 Analyzing: contradiction_test.txt
 Complexity Threshold: 2 mandatory terms
 
@@ -81,43 +101,42 @@ Complexity Threshold: 2 mandatory terms
    Contradictory values: 8.0 vs 6.0 characters
 --------------------------------------------------------------------------------
 💡 Suggestion: Review flagged items and clarify where possible.
-🧪 Testing
-The project includes a comprehensive test suite using pytest.
+```
+### 🧪 Testing
+The project includes a comprehensive test suite using `pytest`.  
 To run the tests:
 
-bash
+```bash
 pip install pytest          # if not already installed
 pytest tests/
-All tests should pass. The suite currently contains over 140 individual tests covering every component.
+```
 
-⚙️ Configuration
-Currently, the lists of vague, weak, and boilerplate terms are hard‑coded in security_linter.py.
-To customise:
+### ⚙️ Configuration
+** Currently, the lists of vague, weak, and boilerplate terms are hard-coded in security_linter.py.**
 
-Edit the global lists in the source file:
+**Customisable Lists**
 
-VAGUE_PHRASES
+- VAGUE_PHRASES
+- VAGUE_SINGLE_WORDS
+- RESPONSIBILITY_VAGUE_TERMS
+- WEAK_TERMS
+- PERMISSIVE_PATTERNS
+- BOILERPLATE_PATTERNS
 
-VAGUE_SINGLE_WORDS
+**After editing, reinstall the package:
+**
+```bash
+pip install .
+```
+#### Future versions will support external configuration files (JSON/YAML).
 
-RESPONSIBILITY_VAGUE_TERMS
+## 📁 Project Structure
 
-WEAK_TERMS
-
-PERMISSIVE_PATTERNS
-
-BOILERPLATE_PATTERNS
-
-Re‑install the package (pip install .) to apply changes.
-
-A future version will support external configuration files (JSON/YAML).
-
-📁 Project Structure
-text
+```text
 security-policy-linter/
-├── security_linter.py          # Main CLI and analysis logic
+├── security_linter.py          # CLI entry point & analysis logic
 ├── policy_rule.py              # Immutable rule data model
-├── tests/
+├── tests/                      # Automated test suite
 │   ├── test_contradictions.py
 │   ├── test_normalisation.py
 │   ├── test_password_extraction.py
@@ -125,30 +144,32 @@ security-policy-linter/
 │   ├── test_session_contradictions.py
 │   ├── test_session_extraction.py
 │   └── test_vague_precision.py
-├── setup.py                     # Installation script
-├── LICENSE                      # MIT License
-├── README.md                    # This file
-└── .gitignore                   # Git ignore rules
-🗑️ Uninstalling
-To remove the tool, use the package name (not the command name):
-
-bash
+├── setup.py                    # Packaging & installation
+├── LICENSE                     # MIT License
+├── README.md                   # Documentation
+└── .gitignore
+```
+## 🗑️ Uninstalling
+### To remove the tool, use the package name (not the command name):
+```bash
 pip uninstall security-policy-linter -y
-This will delete the package and the spl command.
+```
+**This removes both the package and the spl command.
+**
+### 🤝 Contributing
+Contributions are welcome.
 
-🤝 Contributing
-Contributions are welcome! If you encounter a false positive or missing pattern:
-
-Add a test case that reproduces the issue.
-
-Modify the code to make the test pass.
+If you encounter a false positive or missing pattern:      
+Add a test case that reproduces the issue.   
+Modify the code to make the test pass.  
 
 Submit a pull request.
 
 Please ensure all tests pass before submitting.
 
-📄 License
-This project is licensed under the MIT License – see the LICENSE file for details.
+### 📄 License
+This project is licensed under the [MIT License](LICENSE).
+See the LICENSE file for details.
 
-Built with ❤️ by [Your Name]
+**Built with ❤️ by Tashmam Shafique Satti.**         
 Now go lint your policies!
