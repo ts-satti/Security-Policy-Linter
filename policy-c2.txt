@@ -1,0 +1,1 @@
+Logging shall be enabled for critical systems. Logs must be retained in accordance with company policy. Monitoring activities should be sufficient to detect anomalous behavior in a timely manner.

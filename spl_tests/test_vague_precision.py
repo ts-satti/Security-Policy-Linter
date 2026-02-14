@@ -76,11 +76,17 @@ TEST_CASES = [
     ("Security measures sufficient to reduce risks", True, False),
     ("procedures to regularly review records", True, False),
 
-    # --- FALSE POSITIVES (should NOT flag) ---
+   
     ("implemented by one or all of the following, as appropriate:", False, False),
-    ("This safeguard may be implemented by", False, False),  # permissive, not weak
+    ("This safeguard may be implemented by", False, False),  
     ("as appropriate", False, False),
-    # ... add at least 20
+     ("System access shall be granted based on business need.", True, False),
+    ("Requires management approval.", True, False),
+    ("Security configurations should follow best practices.", True, True),  
+    ("Logging must be enabled for critical systems.", True, False),
+    ("Logs must be retained in accordance with company policy.", True, False),
+    ("The IT team will ensure appropriate controls.", True, False),   
+    ("The security team is responsible for oversight.", True, False),
 ]
 
 @pytest.mark.parametrize("sentence,exp_vague,exp_weak", TEST_CASES)

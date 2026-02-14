@@ -1,0 +1,3 @@
+Passwords must comply with corporate password standards.
+
+Passwords must be at least 14 characters and include one number.

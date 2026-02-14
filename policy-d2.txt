@@ -1,0 +1,1 @@
+All employees must report suspected security incidents to the Security Operations Center within 30 minutes of detection. The SOC Manager shall document the incident in the incident tracking system and initiate response procedures defined in IR-01.

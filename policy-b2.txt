@@ -1,0 +1,1 @@
+Confidential data must be protected using industry-standard encryption mechanisms. Data retention periods should align with regulatory requirements. Appropriate safeguards shall be implemented to reduce risk to an acceptable level.

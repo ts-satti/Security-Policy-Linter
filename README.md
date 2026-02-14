@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔐 Security Policy Linter
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
@@ -173,3 +174,5 @@ See the LICENSE file for details.
 
 **Built with ❤️ by Tashmam Shafique Satti.**         
 Now go lint your policies!
+======= = divider
+>>>>>>> a32ed10 (Enhance vague language detection and add new policy examples)

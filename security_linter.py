@@ -230,6 +230,23 @@ VAGUE_PHRASES = [
     "operational constraints",
     "unless explicitly stated otherwise",
     "industry standard",
+    "business need",
+    "management approval",               
+    "best practices",                   
+    "critical systems",                  
+    "in accordance with company policy",
+    "appropriate controls",
+    "safeguard data",
+    "safeguard sensitive systems",
+    "safeguard the environment",
+    "suspicious activity",
+    "unusual behavior",
+    "abnormal events",
+    "potential incidents",
+    "elevated risks",
+    "known threats",
+    "significant vulnerabilities",
+
 ]
 
 VAGUE_SINGLE_WORDS = [
@@ -253,6 +270,7 @@ VAGUE_SINGLE_WORDS = [
     "known",
     "significant",
     "industry-standard",
+
 ]
 
 RESPONSIBILITY_VAGUE_TERMS = [
@@ -260,15 +278,19 @@ RESPONSIBILITY_VAGUE_TERMS = [
     "appropriate",
     "designated",
     "authorized",
-    "expected",        # "System owners are expected" → vague
-    # "management"    ← removed – not vague in "Management is responsible"
-    # "responsible"   ← removed – not vague in "Management is responsible"
+    "expected",
     "personnel",
     "individuals",
     "parties",
     "roles",
     "staff",
     "teams",
+    "it team",          
+    "security team",  
+    "it department",
+    "security department",
+    "management must",
+    "organization",   
 ]
 
 DEFINITION_PATTERNS = [
