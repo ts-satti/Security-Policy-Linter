@@ -1,1 +1,0 @@
-Cloud resources must comply with the organization's security architecture principles. Security configurations should follow best practices. Teams are accountable for maintaining secure deployments within their operational scope.

@@ -1,1 +1,0 @@
-System access shall be granted based on business need and management approval. Access rights should be reviewed periodically. The security team is responsible for overseeing access governance. Exceptions may be granted under special circumstances.

@@ -1,4 +1,0 @@
-All users should use strong passwords. Passwords must be changed regularly.
- The IT team will ensure appropriate controls are in place. Sensitive systems
- may require additional security measures where necessary. 
-Access should be limited as much as possible.
