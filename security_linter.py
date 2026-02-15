@@ -198,7 +198,7 @@ def is_overly_complex(text, threshold=2):
         r'\bare to\b',
         r'\bis to\b',
         r'\bhave to\b',
-        r'\bneed to\b'
+        r'\bneed to\b',
         ]
     find_terms = []
     lower_text = text.lower()
