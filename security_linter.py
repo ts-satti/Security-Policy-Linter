@@ -289,8 +289,7 @@ RESPONSIBILITY_VAGUE_TERMS = [
     "security team",  
     "it department",
     "security department",
-    "management must",
-    "organization",   
+    "management must",  
 ]
 
 DEFINITION_PATTERNS = [
