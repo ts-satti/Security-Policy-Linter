@@ -246,6 +246,11 @@ VAGUE_PHRASES = [
     "elevated risks",
     "known threats",
     "significant vulnerabilities",
+    "it team",
+    "security team",
+    "it department",
+    "security department",
+    "management must",
 
 ]
 
@@ -284,13 +289,9 @@ RESPONSIBILITY_VAGUE_TERMS = [
     "parties",
     "roles",
     "staff",
-    "teams",
-    "it team",          
-    "security team",  
-    "it department",
-    "security department",
-    "management must",  
+    "teams", 
 ]
+
 
 DEFINITION_PATTERNS = [
     r'\bmeans\b',
