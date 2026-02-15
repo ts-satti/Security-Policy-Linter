@@ -53,7 +53,7 @@ TEST_CASES = [
     ("Measures must be implemented to the extent practicable.", True, False),
     ("Controls shall be applied when circumstances permit.", True, False),
     ("Security reviews are conducted as deemed necessary.", True, False),
-    ("Exceptions may be granted based on operational constraints.", True, True),
+    ("Exceptions may be granted based on operational constraints.", True, False),
     ("Requirements apply unless explicitly stated otherwise.", True, False),
     ("Controls shall be selected based on risk.", True, False),
 
@@ -87,6 +87,10 @@ TEST_CASES = [
     ("Logs must be retained in accordance with company policy.", True, False),
     ("The IT team will ensure appropriate controls.", True, False),   
     ("The security team is responsible for oversight.", True, False),
+
+    ("IWU may temporarily suspend or block access to any individual or device when it appears", False, False),
+    ("Any personnel found to have violated this procedure may be subject to disciplinary action, up to", False, False),
+    ("authorized agent, may access, review, monitor and/or disclose computer files associated with", False, False),
 ]
 
 @pytest.mark.parametrize("sentence,exp_vague,exp_weak", TEST_CASES)

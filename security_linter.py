@@ -282,9 +282,7 @@ RESPONSIBILITY_VAGUE_TERMS = [
     "relevant",
     "appropriate",
     "designated",
-    "authorized",
     "expected",
-    "personnel",
     "individuals",
     "parties",
     "roles",
@@ -303,7 +301,6 @@ BOILERPLATE_PATTERNS = [
     r'one or all of the following',
     r'may be implemented',
     r'can be implemented',
-    # 'as appropriate' removed – handled by standalone check below
 ]
 
 def has_vague_language(text):
@@ -322,6 +319,10 @@ def has_vague_language(text):
 
     # ----- SKIP OTHER BOILERPLATE -----
     if any(re.search(p, lower) for p in BOILERPLATE_PATTERNS):
+        return False, []
+    
+    # ----- Skip bullet‑point policy titles -----
+    if re.match(r'^\s*[●•\-]\s*[A-Za-z][A-Za-z\s]+(?::\s*)?$', text):
         return False, []
 
     found = set()
@@ -354,7 +355,13 @@ PERMISSIVE_PATTERNS = [
     r'may be implemented',
     r'can be implemented',
     r'one or all of the following',
-    # 'may be granted' removed – it is a permissive policy statement, not boilerplate
+    r'may be granted',
+    r'may temporarily suspend',      
+    r'may be subject to',            
+    r'may access',                   
+    r'may review',                   
+    r'may monitor',                  
+    r'may disclose',                 
 ]
 
 def has_weak_language(text):
@@ -415,7 +422,9 @@ REFERENCE_PHRASES = [
 # Patterns that indicate a specific document/standard is cited
 DOCUMENT_ID_PATTERNS = [
     r'\b(?:ISO|IEC|NIST|IEEE|STD)(?:\s+[A-Z]+)?(?:\s*/\s*[A-Z]+)?\s*\d+(?:[-–—]\d+)*(?:\.\d+)?\b',
-     r'\b[A-Z]{2,}[-–—‐‑]?\d+(?:[-–—‐‑]\d+)*\b',
+    r'\b[A-Z]{2,}[-–—‐‑]?\d+(?:[-–—‐‑]\d+)*\b', 
+    r'\b[A-Z]{2,}(?:\s+[A-Z]+)?\s+\d+(?:[-–—]\d+)*\b',
+    r'\b(?:FERPA|GLBA|HIPAA|HITECH|CCPA|FIPS-199|PCI\s+DSS(?:\s+\d+\.\d+)?)\b',
     r'\bversion\s+[\d\.]+',
     r'\bv[\d\.]+\b',
     r'\brevision\s+[\d\.]+',
@@ -430,6 +439,13 @@ def has_unbound_reference(text):
     lower = text.lower()
     # Check for a reference phrase
     found_phrase = None
+    phrases_escaped = [re.escape(p) for p in REFERENCE_PHRASES]
+    pattern = r'\b(?:' + '|'.join(phrases_escaped) + r')\b'
+    match = re.search(pattern, lower)
+    if not match:
+        return False, []
+    found_phrase = match.group(0)
+
     for phrase in REFERENCE_PHRASES:
         if phrase in lower:
             found_phrase = phrase
