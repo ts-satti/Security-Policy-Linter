@@ -397,6 +397,56 @@ def has_weak_language(text):
     return bool(found), found
 
 
+# --- Unbound Reference Detection ---
+REFERENCE_PHRASES = [
+    "comply with",
+    "in accordance with",
+    "per",
+    "according to",
+    "as defined in",
+    "as specified in",
+    "based on",
+    "meet the requirements of",
+    "as outlined in",                     
+    "following the guidelines provided by",  
+    "following the guidelines",            
+]
+
+# Patterns that indicate a specific document/standard is cited
+DOCUMENT_ID_PATTERNS = [
+    r'\b(?:ISO|IEC|NIST|IEEE|STD)(?:\s+[A-Z]+)?(?:\s*/\s*[A-Z]+)?\s*\d+(?:[-–—]\d+)*(?:\.\d+)?\b',
+     r'\b[A-Z]{2,}[-–—‐‑]?\d+(?:[-–—‐‑]\d+)*\b',
+    r'\bversion\s+[\d\.]+',
+    r'\bv[\d\.]+\b',
+    r'\brevision\s+[\d\.]+',
+    r'\b(?:draft|final|release)\s+[\d\.]+\b',
+]
+
+def has_unbound_reference(text):
+    """
+    Returns (bool, list) – True if an unbound reference is found,
+    i.e., the sentence references an external document without an identifier.
+    """
+    lower = text.lower()
+    # Check for a reference phrase
+    found_phrase = None
+    for phrase in REFERENCE_PHRASES:
+        if phrase in lower:
+            found_phrase = phrase
+            break
+    if not found_phrase:
+        return False, []
+
+    # If a document ID pattern matches, it's bound → not a problem
+    for pattern in DOCUMENT_ID_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            return False, []
+
+    # If we get here, it's an unbound reference
+    return True, [found_phrase]
+
+
+
 def split_into_sentences(text):
     """
     A naive but functional sentence splitter for policy text.
@@ -488,6 +538,18 @@ def analyze_policy(file_path, complexity_threshold=2):
                         'term_count': len(weak_terms)
                     }
                 })
+            # Unbound reference detection
+            unbound_flag, found_phrases = has_unbound_reference(sentence)
+            if unbound_flag:
+                findings.append({
+                    'line': line_num,
+                    'type': 'Unbound Reference',
+                    'text': sentence,
+                    'details': {
+                        'found_phrases': found_phrases
+                    }
+                })
+
             password_rules = extract_password_min_length_rules(sentence, line_num)
             extracted_rules.extend(password_rules)
             session_rules = extract_session_timeout_rules(sentence, line_num)
@@ -900,6 +962,9 @@ def print_findings(findings, show_all_lines=False):
             print(f"   Lines {finding['lines'][0]} and {finding['lines'][1]}:")
             print(f"     - \"{finding['texts'][0]}\"")
             print(f"     - \"{finding['texts'][1]}\"")
+        elif finding['type'] == 'Unbound Reference':
+            print(f"   References external standard without identifier: \"{finding['text']}\"")
+            print(f"   Trigger phrase: {', '.join(finding['details']['found_phrases'])}")
            
     print("-" * 80)
     print("💡 Suggestion: Review flagged items and clarify where possible.")
