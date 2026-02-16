@@ -7,6 +7,37 @@ from typing import List, Tuple, Optional
 from policy_rule import PolicyRule, SubjectType, ComparatorType
 from copy import deepcopy
 
+
+# Business impact messages with references to industry standards
+BUSINESS_IMPACT = {
+    "Unbound Reference": (
+        "🔗 References an external document without a specific identifier. "
+        "NIST SP 800‑53 requires that policies reference specific versions of standards "
+        "to ensure enforceability (see control PM‑1)."
+    ),
+    "Vague Language": (
+        "🧩 Uses subjective terms that lack measurable criteria. "
+        "ISO 27002 emphasizes that policy language must be clear and unambiguous "
+        "(see clause 5.2)."
+    ),
+    "Weak Language": (
+        "⚖️ Uses permissive or advisory language in a requirement. "
+        "CIS Controls recommend using strong, directive language for mandatory requirements "
+        "(see CIS Control 17)."
+    ),
+    "Contradiction": (
+        "⚠️ Contains conflicting requirements. "
+        "NIST SP 800‑53 requires policies to be internally consistent to avoid "
+        "implementation errors (see control CA‑2)."
+    ),
+    "Overly Complex": (
+        "📏 Sentence contains multiple mandatory terms, making it difficult to interpret. "
+        "Simpler language improves compliance and reduces misinterpretation "
+        "(see ISO 27002 clause 5.2)."
+    ),
+}
+
+
 def _rule_to_interval(rule: PolicyRule) -> Tuple[float, bool, float, bool]:
     """
     Convert a PolicyRule to an interval (lower, lower_inc, upper, upper_inc).
@@ -981,7 +1012,11 @@ def print_findings(findings, show_all_lines=False):
         elif finding['type'] == 'Unbound Reference':
             print(f"   References external standard without identifier: \"{finding['text']}\"")
             print(f"   Trigger phrase: {', '.join(finding['details']['found_phrases'])}")
-           
+
+        # Business impact (applies to all types)
+        if finding['type'] in BUSINESS_IMPACT:
+            print(f"   {BUSINESS_IMPACT[finding['type']]}")
+
     print("-" * 80)
     print("💡 Suggestion: Review flagged items and clarify where possible.")
 
