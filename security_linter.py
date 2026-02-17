@@ -6,6 +6,7 @@ import sys
 from typing import List, Tuple, Optional
 from policy_rule import PolicyRule, SubjectType, ComparatorType
 from copy import deepcopy
+import os
 
 
 # Business impact messages with references to industry standards
@@ -37,6 +38,42 @@ BUSINESS_IMPACT = {
     ),
 }
 
+def extract_text_from_pdf(file_path):
+    """Extract text from a PDF file using pypdf."""
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        print("Error: pdf support requires 'pypdf'. Install with pip install pypdf")
+        sys.exit(1)
+    try:
+        reader = PdfReader(file_path)
+        text = []
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text.append(page_text)
+        return '\n'.join(text)
+    except Exception as e:
+        print(f"Error extracting text from PDF: {e}")
+        sys.exit(1)
+
+def extract_text_from_docx(file_path):
+    """Extract text from a DOCX file using python-docx."""
+    try:
+        import docx
+    except ImportError:
+        print("Error: docx support requires 'python-docx'. Install with pip install python-docx")
+        sys.exit(1)
+    try:
+        doc = docx.Document(file_path)
+        text = []
+        for para in doc.paragraphs:
+            if para.text.strip():
+                text.append(para.text)
+        return '\n'.join(text)
+    except Exception as e:
+        print(f"Error extracting text from DOCX: {e}")
+        sys.exit(1)
 
 def _rule_to_interval(rule: PolicyRule) -> Tuple[float, bool, float, bool]:
     """
@@ -511,57 +548,63 @@ def split_into_sentences(text):
 
 
 def analyze_policy(file_path, complexity_threshold=2):
-    """d
-    Main analysis function. Reads file and applies detection rules.
-    
-    Args:
-        file_path (str): Path to the policy file.
-        complexity_threshold (int): Threshold for complex sentences.
-    
-    Returns:
-        list: Findings ready for reporting.
-    """
+    """Main analysis function. Reads file and applies detection rules."""
     extracted_rules = []
     findings = []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
-        sys.exit(1)
-    except PermissionError:
-        print(f"Error: Permission denied for file '{file_path}'.")
-        sys.exit(1)
-    except UnicodeDecodeError:
-        print(f"Error: Could not decode file '{file_path}'. Ensure it's a valid text file.")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error: Could not read file: {e}")
+
+    # Check if file exists
+    if not os.path.isfile(file_path):
+        print(f"Error: File '{file_path}' does not exist.")
         sys.exit(1)
 
-    for line_num, raw_line in enumerate(lines, start=1):       
+    ext = os.path.splitext(file_path)[1].lower()
+    content = ""
+
+    # Extract text based on file type
+    if ext == '.txt':
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            print(f"Error: Could not decode file '{file_path}'. Ensure it's a valid text file.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error reading text file: {e}")
+            sys.exit(1)
+    elif ext == '.pdf':
+        content = extract_text_from_pdf(file_path)
+    elif ext == '.docx':
+        content = extract_text_from_docx(file_path)
+    else:
+        print(f"Error: Unsupported file type '{ext}'. Supported types: .txt, .pdf, .docx")
+        sys.exit(1)
+
+    # Split content into lines for processing
+    lines = content.splitlines()
+
+    # Process each line (existing logic, unchanged)
+    for line_num, raw_line in enumerate(lines, start=1):
         raw_line = raw_line.strip('\n')
         if not raw_line.strip():
             continue
-       # print(f"Processing Line {line_num}: {repr(raw_line)}")
+
         sentences = split_into_sentences(raw_line)
-       # print(f" Sentences: {sentences}")
         for sentence in sentences:
+            # Overly complex
             complex_flag, found_terms = is_overly_complex(sentence, complexity_threshold)
-         #   print(f"    Sentence: {sentence} -> Flag: {complex_flag}, Terms: {found_terms}")
             if complex_flag:
                 findings.append({
                     'line': line_num,
                     'type': 'Overly Complex',
                     'text': sentence,
-                    'details':{
+                    'details': {
                         'found_terms': found_terms,
                         'term_count': len(found_terms),
                         'threshold': complexity_threshold
                     }
-                    
                 })
-            # Vague language detection
+
+            # Vague language
             vague_flag, vague_terms = has_vague_language(sentence)
             if vague_flag:
                 findings.append({
@@ -572,8 +615,9 @@ def analyze_policy(file_path, complexity_threshold=2):
                         'found_terms': vague_terms,
                         'term_count': len(vague_terms)
                     }
-                }) 
-            # Weak language detection
+                })
+
+            # Weak language
             weak_flag, weak_terms = has_weak_language(sentence)
             if weak_flag:
                 findings.append({
@@ -585,27 +629,29 @@ def analyze_policy(file_path, complexity_threshold=2):
                         'term_count': len(weak_terms)
                     }
                 })
-            # Unbound reference detection
+
+            # Unbound reference
             unbound_flag, found_phrases = has_unbound_reference(sentence)
             if unbound_flag:
                 findings.append({
                     'line': line_num,
                     'type': 'Unbound Reference',
                     'text': sentence,
-                    'details': {
-                        'found_phrases': found_phrases
-                    }
+                    'details': {'found_phrases': found_phrases}
                 })
 
+            # Password rules
             password_rules = extract_password_min_length_rules(sentence, line_num)
             extracted_rules.extend(password_rules)
+
+            # Session rules
             session_rules = extract_session_timeout_rules(sentence, line_num)
             extracted_rules.extend(session_rules)
-            
-    # After processing all sentences
-    
+
+    # Contradiction detection
     contradiction_findings = detect_contradictions(extracted_rules)
     findings.extend(contradiction_findings)
+
     return findings
 
 def extract_session_timeout_rules(sentence: str, line_number: int) -> List[PolicyRule]:

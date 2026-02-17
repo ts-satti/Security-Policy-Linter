@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="security-policy-linter",
-    version="1.2.0",
+    version="1.3.0",
     description="Lint security policy documents for contradictions, vague language, and weak requirements.",
     author="Tashmam Shafique Satti",
     author_email="tushamumsatti@gmail.com",
@@ -18,5 +18,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    extras_require={
+        "pdf": ["pypdf>=3.0.0"],
+        "docx": ["python-docx>=0.8.11"],
+        "all": ["pypdf>=3.0.0", "python-docx>=0.8.11"],
+    },
     python_requires=">=3.8",
 )
