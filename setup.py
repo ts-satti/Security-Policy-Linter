@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="security-policy-linter",
-    version="1.3.0",
+    version="1.3.2",
     description="Lint security policy documents for contradictions, vague language, and weak requirements.",
     author="Tashmam Shafique Satti",
     author_email="tushamumsatti@gmail.com",

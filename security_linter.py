@@ -343,21 +343,14 @@ VAGUE_SINGLE_WORDS = [
     "known",
     "significant",
     "industry-standard",
-
+    "relevant",
+    "designated",
+    "expected",
 ]
 
 RESPONSIBILITY_VAGUE_TERMS = [
-    "relevant",
-    "appropriate",
-    "designated",
-    "expected",
-    "individuals",
-    "parties",
-    "roles",
-    "staff",
-    "teams", 
+    "personnel","it team", "security team", "it department", "security department",
 ]
-
 
 DEFINITION_PATTERNS = [
     r'\bmeans\b',
@@ -424,12 +417,47 @@ PERMISSIVE_PATTERNS = [
     r'can be implemented',
     r'one or all of the following',
     r'may be granted',
-    r'may temporarily suspend',      
-    r'may be subject to',            
-    r'may access',                   
-    r'may review',                   
-    r'may monitor',                  
-    r'may disclose',                 
+    r'may temporarily suspend',
+    r'may be subject to',
+    r'may access',
+    r'may review',
+    r'may monitor',
+    r'may disclose',
+    r'may include',              
+    r'may result',                
+    r'may be used',               
+    r'may be stored',             
+    r'may be transferred',        
+    r'may be accessed',           
+    r'may be released',    
+    r'may be disclosed',
+    r'may be shared',
+    r'may be used',
+    r'may be stored',
+    r'may be transferred',
+    r'may be accessed',
+    r'may be released',
+    r'may be consulted',
+    r'may be required',
+    r'may be necessary',
+    r'may include',
+    r'may result',      
+    r'may require',
+    r'may also',
+    r'may designate',
+    r'may adversely affect',
+    r'may only be used',
+    r'may reside',
+    r'may be compromised',
+    r'may be sent',
+    r'may be in',
+    r'may allow',
+    r'could impede',
+    r'could affect',
+    r'might be collected',
+    r'can determine',
+    r'can view',
+
 ]
 
 def has_weak_language(text):
@@ -476,11 +504,8 @@ def has_weak_language(text):
 REFERENCE_PHRASES = [
     "comply with",
     "in accordance with",
-    "per",
-    "according to",
     "as defined in",
     "as specified in",
-    "based on",
     "meet the requirements of",
     "as outlined in",                     
     "following the guidelines provided by",  
@@ -500,13 +525,8 @@ DOCUMENT_ID_PATTERNS = [
 ]
 
 def has_unbound_reference(text):
-    """
-    Returns (bool, list) – True if an unbound reference is found,
-    i.e., the sentence references an external document without an identifier.
-    """
     lower = text.lower()
-    # Check for a reference phrase
-    found_phrase = None
+    # Check for a reference phrase using a combined regex
     phrases_escaped = [re.escape(p) for p in REFERENCE_PHRASES]
     pattern = r'\b(?:' + '|'.join(phrases_escaped) + r')\b'
     match = re.search(pattern, lower)
@@ -514,11 +534,8 @@ def has_unbound_reference(text):
         return False, []
     found_phrase = match.group(0)
 
-    for phrase in REFERENCE_PHRASES:
-        if phrase in lower:
-            found_phrase = phrase
-            break
-    if not found_phrase:
+    # Skip internal self‑references
+    if re.search(r'\b(this policy|this document|comply with policy)\b', lower):
         return False, []
 
     # If a document ID pattern matches, it's bound → not a problem
